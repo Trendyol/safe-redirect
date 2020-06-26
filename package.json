@@ -1,0 +1,29 @@
+{
+  "name": "@trendyol/safe-redirect",
+  "version": "1.0.0",
+  "description": "Resolves open-redirection issue",
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "test": "npx jest"
+  },
+  "keywords": [
+    "open-redirection",
+    "vulnerability",
+    "security"
+  ],
+  "author": "sefa.balik@trendyol.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/faker": "^4.1.12",
+    "@types/jest": "^26.0.3",
+    "@types/sinon": "^9.0.4",
+    "faker": "^4.1.0",
+    "jest": "^26.1.0",
+    "sinon": "^9.0.2",
+    "ts-jest": "^26.1.1",
+    "typescript": "^3.9.5"
+  }
+}
