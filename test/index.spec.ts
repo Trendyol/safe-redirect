@@ -121,4 +121,48 @@ describe("Safe Redirection Unit Tests", () => {
 
     expect(assignStub.calledWith("alert('hey')")).toBe(true);
   });
+
+  describe("options", () => {
+    it("should append options.extraQueryParams", () => {
+      // Arrange
+        const extraQueryParams = `?${word()}=${word()}&${word()}=${word()}`;
+
+      // Act
+        redirect(mockRedirectionQueryKey, { extraQueryParams });
+
+      // Assert
+      const assignStub = window.location.assign as SinonStub;
+      expect(assignStub.calledWith(`${mockRedirectionQueryValue}${extraQueryParams}`)).toBe(true);
+    });
+
+
+    it("should append options.extraQueryParams when query string already exists", () => {
+      // Arrange
+      const extraQueryKey1 = word();
+      const extraQueryValue1 = word();
+      const extraQueryKey2 = word();
+      const extraQueryValue2 = word();
+      const extraQueryParams = `?${extraQueryKey1}=${extraQueryValue1}&${extraQueryKey2}=${extraQueryValue2}`;
+      const queryKey1 = word();
+      const queryValue1 = word();
+      const queryKey2 = word();
+      const queryValue2 = word();
+      const query = `${queryKey1}=${queryValue1}&${queryKey2}=${queryValue2}`;
+      const localSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}?${query}`;
+      window.location.search = localSearch;
+      window.location.href = `${url()}${localSearch}`;
+
+      // Act
+      redirect(mockRedirectionQueryKey, { extraQueryParams });
+
+      // Assert
+      const assignStub = window.location.assign as SinonStub;
+      const searchParams = new URL(`${url()}${assignStub.getCall(0).args[0]}`).searchParams;
+
+      expect(searchParams.get(queryKey1)).toBe(queryValue1);
+      expect(searchParams.get(queryKey2)).toBe(queryValue2);
+      expect(searchParams.get(extraQueryKey1)).toBe(extraQueryValue1);
+      expect(searchParams.get(extraQueryKey2)).toBe(extraQueryValue2);
+    });
+  });
 });
