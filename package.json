@@ -1,6 +1,6 @@
 {
   "name": "@trendyol/safe-redirect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Resolves open-redirection issue",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
