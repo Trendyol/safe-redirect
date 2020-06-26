@@ -3,7 +3,9 @@ import faker from "faker";
 import { redirect } from "../src"
 
 const sandbox = sinon.createSandbox();
-const { lorem: { word }, internet: { url } } = faker;
+const { lorem, internet: { url } } = faker;
+
+const word = () => `${lorem.word()}${lorem.word()}`; // to reduce collusions
 
 describe("Safe Redirection Unit Tests", () => {
   const { location } = window;
@@ -122,7 +124,7 @@ describe("Safe Redirection Unit Tests", () => {
     expect(assignStub.calledWith("alert('hey')")).toBe(true);
   });
 
-  describe("options", () => {
+  describe("options.extraQueryParams", () => {
     it("should append options.extraQueryParams", () => {
       // Arrange
         const extraQueryParams = `?${word()}=${word()}&${word()}=${word()}`;
@@ -163,6 +165,21 @@ describe("Safe Redirection Unit Tests", () => {
       expect(searchParams.get(queryKey2)).toBe(queryValue2);
       expect(searchParams.get(extraQueryKey1)).toBe(extraQueryValue1);
       expect(searchParams.get(extraQueryKey2)).toBe(extraQueryValue2);
+    });
+  });
+
+  describe("options.replace", () => {
+    it("should call window.location.replace", () => {
+      // Arrange
+
+      // Act
+      redirect(mockRedirectionQueryKey, { replace: true });
+
+      // Assert
+      const replaceStub = window.location.replace as SinonStub;
+      const assignStub = window.location.assign as SinonStub;
+      expect(replaceStub.calledWith(mockRedirectionQueryValue)).toBe(true);
+      expect(assignStub.called).toBe(false);
     });
   });
 });

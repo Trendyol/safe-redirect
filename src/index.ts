@@ -5,6 +5,9 @@ export const redirect = (queryParamName: string, options?: Options) => {
   if (options?.extraQueryParams) {
     value = appendExtraQueryParams(value, options.extraQueryParams);
   }
+  if (options?.replace) {
+    return window.location.replace(value);
+  }
   window.location.assign(value);
 }
 

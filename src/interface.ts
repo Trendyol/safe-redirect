@@ -1,3 +1,4 @@
 export interface Options {
-  extraQueryParams: string;
+  extraQueryParams?: string;
+  replace?: boolean;
 }
