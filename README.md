@@ -1,6 +1,6 @@
 # safe-redirect
 
-safe-redirect is a library which resolves open-redirection vulnerability when we need to make redirection to a path taken from query string.
+safe-redirect is a library which resolves open-redirection vulnerability when we need to make client-side redirection to a path taken from query string.
 
 ## Example
 
