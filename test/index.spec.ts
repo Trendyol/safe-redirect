@@ -105,6 +105,24 @@ describe("Safe Redirection Unit Tests", () => {
     expect(assignStub.calledWith("/")).toBe(true);
   });
 
+  it("should escape other domains with encode", () => {
+    // Arrange
+    mockRedirectionQueryKey = word();
+    mockRedirectionQueryValue = `http%3A%2F%2Fgoogle.com`;
+    const mockSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}`;
+    const mockUrl = `${url()}${mockSearch}`;
+
+    window.location.href = mockUrl;
+    window.location.search = mockSearch;
+
+    // Act
+    redirect(mockRedirectionQueryKey);
+
+    // Assert
+    const assignStub = window.location.assign as SinonStub;
+    expect(assignStub.calledWith("/")).toBe(true);
+  });
+
   it("should escape javascript", () => {
     // Arrange
     mockRedirectionQueryKey = word();
