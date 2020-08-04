@@ -31,7 +31,7 @@ A site can redirect user to `domain.com/login?callback=javascript:alert(document
 safe-redirect library solves this vulnerability. Simply:
 
 ```
-import { redirect } from "safe-redirect";
+import { redirect } from "@trendyol/safe-redirect";
 
 // successful login
 redirect("callback"); // give name of the query parameter
