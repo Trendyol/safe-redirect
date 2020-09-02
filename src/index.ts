@@ -15,7 +15,7 @@ export const redirect = (queryParamName: string, options?: Options) => {
 }
 
 function getSafeValues(queryParamName: string) {
-  const url = new URL(window.location.href);
+  const url = new URL(decodeURIComponent(window.location.href));
   const callbackValue = url.searchParams.get(queryParamName);
   if (callbackValue) {
     const cbUrl = new URL(callbackValue, window.location.href);
