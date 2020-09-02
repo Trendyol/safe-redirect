@@ -1,17 +1,22 @@
 import { Options } from "./interface";
 
 export const redirect = (queryParamName: string, options?: Options) => {
-  let [value, hash] = getSafeValues(queryParamName);
-  if (options?.extraQueryParams) {
-    value = appendExtraQueryParams(value, options.extraQueryParams);
+  try {
+    let [value, hash] = getSafeValues(queryParamName);
+    if (options?.extraQueryParams) {
+      value = appendExtraQueryParams(value, options.extraQueryParams);
+    }
+    if (hash) {
+      value += hash;
+    }
+    if (options?.replace) {
+      return window.location.replace(value);
+    }
+    window.location.assign(value);
+  } catch (e) {
+    console.error("Error: ", e);
+    window.location.assign("/");
   }
-  if (hash) {
-    value += hash;
-  }
-  if (options?.replace) {
-    return window.location.replace(value);
-  }
-  window.location.assign(value);
 }
 
 function getSafeValues(queryParamName: string) {

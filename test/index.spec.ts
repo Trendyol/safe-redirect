@@ -120,7 +120,6 @@ describe("Safe Redirection Unit Tests", () => {
 
     // Assert
     const assignStub = window.location.assign as SinonStub;
-    console.log(`${url()}${assignStub.getCall(0).args[0]}`)
 
     const calledUrl = new URL(`${url()}${assignStub.getCall(0).args[0]}`);
 
@@ -243,5 +242,20 @@ describe("Safe Redirection Unit Tests", () => {
       expect(replaceStub.calledWith(mockRedirectionQueryValue)).toBe(true);
       expect(assignStub.called).toBe(false);
     });
+  });
+
+  it("should redirect to /", () => {
+    // Arrange
+    sandbox.stub(window, "URL").throws();
+    const errorStub = sandbox.stub(console, "error");
+
+    // Act
+    redirect(mockRedirectionQueryKey);
+
+    // Assert
+    const assignStub = window.location.assign as SinonStub;
+    expect(assignStub.calledWith("/")).toBe(true);
+    expect(errorStub.called).toBe(true);
+
   });
 });
