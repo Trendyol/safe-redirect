@@ -1,9 +1,12 @@
 import { Options } from "./interface";
 
 export const redirect = (queryParamName: string, options?: Options) => {
-  let value = getSafeValues(queryParamName);
+  let [value, hash] = getSafeValues(queryParamName);
   if (options?.extraQueryParams) {
     value = appendExtraQueryParams(value, options.extraQueryParams);
+  }
+  if (hash) {
+    value += hash;
   }
   if (options?.replace) {
     return window.location.replace(value);
@@ -12,7 +15,7 @@ export const redirect = (queryParamName: string, options?: Options) => {
 }
 
 function getSafeValues(queryParamName: string) {
-  const url = new URL(window.location.href);
+  const url = new URL(decodeURIComponent(window.location.href));
   const callbackValue = url.searchParams.get(queryParamName);
   if (callbackValue) {
     const cbUrl = new URL(callbackValue, window.location.href);
@@ -22,9 +25,9 @@ function getSafeValues(queryParamName: string) {
     });
 
     url.searchParams.delete(queryParamName);
-    return cbUrl.pathname + url.search;
+    return [cbUrl.pathname + url.search, url.hash];
   }
-  return "/"
+  return ["/", url.hash]
 }
 
 function appendExtraQueryParams(value: string, searchParam: string) {

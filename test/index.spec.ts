@@ -87,6 +87,50 @@ describe("Safe Redirection Unit Tests", () => {
     expect(searchParams.get(queryKey2)).toBe(queryValue2);
   });
 
+  it("should redirect with preserving hash", () => {
+    // Arrange
+    const localHash = `#${word()}`;
+    const localSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}${localHash}`;
+    window.location.search = localSearch;
+    window.location.href = `${url()}${localSearch}`;
+
+    // Act
+    redirect(mockRedirectionQueryKey);
+
+    // Assert
+    const assignStub = window.location.assign as SinonStub;
+
+    expect(new URL(`${url()}${assignStub.getCall(0).args[0]}`).hash).toBe(localHash);
+  });
+
+  it("should redirect with preserving callbacks query params and hash", () => {
+    // Arrange
+    const queryKey1 = word();
+    const queryValue1 = word();
+    const queryKey2 = word();
+    const queryValue2 = word();
+    const localHash = `#${word()}`;
+    const query = `${queryKey1}=${queryValue1}&${queryKey2}=${queryValue2}`;
+    const localSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}?${query}${localHash}`;
+    window.location.search = localSearch;
+    window.location.href = `${url()}${localSearch}`;
+
+    // Act
+    redirect(mockRedirectionQueryKey);
+
+    // Assert
+    const assignStub = window.location.assign as SinonStub;
+    console.log(`${url()}${assignStub.getCall(0).args[0]}`)
+
+    const calledUrl = new URL(`${url()}${assignStub.getCall(0).args[0]}`);
+
+    const searchParams = calledUrl.searchParams;
+
+    expect(searchParams.get(queryKey1)).toBe(queryValue1);
+    expect(searchParams.get(queryKey2)).toBe(queryValue2);
+    expect(calledUrl.hash).toBe(localHash);
+  });
+
   it("should escape other domains", () => {
     // Arrange
     mockRedirectionQueryKey = word();
