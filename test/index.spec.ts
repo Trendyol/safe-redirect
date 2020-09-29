@@ -292,7 +292,7 @@ describe("Safe Redirection Unit Tests", () => {
       expect(new URL(`${url()}${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}%20${key2}`);
     });
 
-  describe("when options.encodePlus is true", () => {
+  describe("when options.decodePlus is true", () => {
     it("should redirect with encoding %20 to +", () => {
       // Arrange
       const key1 = word();
@@ -300,7 +300,7 @@ describe("Safe Redirection Unit Tests", () => {
       window.location.href = `${url()}?${mockRedirectionQueryKey}=${key1}+${key2}`;
 
       // Act
-      redirect(mockRedirectionQueryKey, {encodePlus: true});
+      redirect(mockRedirectionQueryKey, {decodePlus: true});
 
       // Assert
       const assignStub = window.location.assign as SinonStub;
