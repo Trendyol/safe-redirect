@@ -2,11 +2,15 @@ import { Options } from "./interface";
 
 export const redirect = (queryParamName: string, options?: Options) => {
   try {
-    let [value, hash] = getSafeValues(queryParamName);
+    let [pathname, search, hash] = getSafeValues(queryParamName);
+    if (options?.encodePlus) {
+      pathname = pathname.replace("%20", "+");
+    }
+    let value = pathname + search;
     if (options?.extraQueryParams) {
       value = appendExtraQueryParams(value, options.extraQueryParams);
     }
-    if (hash) {
+    if (hash && !options?.eraseHash) {
       value += hash;
     }
     if (options?.replace) {
@@ -30,7 +34,7 @@ function getSafeValues(queryParamName: string) {
     });
 
     url.searchParams.delete(queryParamName);
-    return [cbUrl.pathname + url.search, url.hash];
+    return [cbUrl.pathname, url.search, url.hash];
   }
   return ["/", url.hash]
 }
