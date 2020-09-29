@@ -4,7 +4,8 @@ export const redirect = (queryParamName: string, options?: Options) => {
   try {
     let [pathname, search, hash] = getSafeValues(queryParamName);
     if (options?.decodePlus) {
-      pathname = pathname.replace("%20", "+");
+      const searchRegExp = /\%20/g;
+      pathname = pathname.replace(searchRegExp, "+");
     }
     let value = pathname + search;
     if (options?.extraQueryParams) {
