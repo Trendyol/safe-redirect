@@ -281,7 +281,8 @@ describe("Safe Redirection Unit Tests", () => {
       // Arrange
       const key1 = word();
       const key2 = word();
-      window.location.href = `${url()}?${mockRedirectionQueryKey}=${key1}+${key2}`;
+      const key3 = word();
+      window.location.href = `${url()}?${mockRedirectionQueryKey}=${key1}+${key2}+${key3}`;
 
       // Act
       redirect(mockRedirectionQueryKey);
@@ -289,7 +290,7 @@ describe("Safe Redirection Unit Tests", () => {
       // Assert
       const assignStub = window.location.assign as SinonStub;
 
-      expect(new URL(`${url()}${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}%20${key2}`);
+      expect(new URL(`${url()}${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}%20${key2}%20${key3}`);
     });
 
   describe("when options.decodePlus is true", () => {
