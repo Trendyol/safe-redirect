@@ -3,7 +3,7 @@ import { Options } from "./interface";
 export const redirect = (queryParamName: string, options?: Options) => {
   try {
     let [pathname, search, hash] = getSafeValues(queryParamName);
-    if (options?.encodePlus) {
+    if (options?.decodePlus) {
       pathname = pathname.replace("%20", "+");
     }
     let value = pathname + search;
