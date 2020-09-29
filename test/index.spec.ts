@@ -277,6 +277,21 @@ describe("Safe Redirection Unit Tests", () => {
     });
   });
 
+  it("should redirect with preserving %20", () => {
+      // Arrange
+      const key1 = word();
+      const key2 = word();
+      window.location.href = `${url()}?${mockRedirectionQueryKey}=${key1}+${key2}`;
+
+      // Act
+      redirect(mockRedirectionQueryKey);
+
+      // Assert
+      const assignStub = window.location.assign as SinonStub;
+
+      expect(new URL(`${url()}${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}%20${key2}`);
+    });
+
   describe("when options.encodePlus is true", () => {
     it("should redirect with encoding %20 to +", () => {
       // Arrange
