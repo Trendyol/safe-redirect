@@ -55,13 +55,15 @@ describe("Safe Redirection Unit Tests", () => {
 
   it("should redirect to /", () => {
     // Arrange
+    const localSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}`;
+    window.location.search = localSearch;
 
     // Act
     redirect("");
 
     // Assert
     const assignStub = window.location.assign as SinonStub;
-    expect(assignStub.calledWith("/")).toBe(true);
+    expect(assignStub.calledWith(`/${localSearch}`)).toBe(true);
   });
 
   it("should redirect with preserving callbacks query params", () => {

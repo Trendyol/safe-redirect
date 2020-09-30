@@ -37,7 +37,7 @@ function getSafeValues(queryParamName: string) {
     url.searchParams.delete(queryParamName);
     return [cbUrl.pathname, url.search, url.hash];
   }
-  return ["/", url.hash]
+  return ["/", url.search, url.hash];
 }
 
 function appendExtraQueryParams(value: string, searchParam: string) {
