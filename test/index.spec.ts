@@ -11,14 +11,17 @@ describe("Safe Redirection Unit Tests", () => {
   const { location } = window;
   let mockRedirectionQueryKey: string;
   let mockRedirectionQueryValue: string;
+  let origin: string;
 
   beforeEach(() => {
     delete window.location;
     let mockLocation: Location;
+    origin = url();
     mockRedirectionQueryKey = word();
     mockRedirectionQueryValue = `/${word()}`;
     const mockSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}`;
-    const mockUrl = `${url()}${mockSearch}`;
+    const mockUrl = `${origin}${mockSearch}`;
+
     mockLocation = {
       assign: sandbox.stub(),
       replace: sandbox.stub(),
@@ -27,7 +30,7 @@ describe("Safe Redirection Unit Tests", () => {
       protocol: "",
       port: "",
       pathname: "",
-      origin: "",
+      origin,
       href: mockUrl,
       hostname: "",
       host: "",
@@ -50,7 +53,7 @@ describe("Safe Redirection Unit Tests", () => {
 
     // Assert
     const assignStub = window.location.assign as SinonStub;
-    expect(assignStub.calledWith(mockRedirectionQueryValue)).toBe(true);
+    expect(assignStub.calledWith(`${origin}${mockRedirectionQueryValue}`)).toBe(true);
   });
 
   it("should redirect to /", () => {
@@ -63,7 +66,7 @@ describe("Safe Redirection Unit Tests", () => {
 
     // Assert
     const assignStub = window.location.assign as SinonStub;
-    expect(assignStub.calledWith(`/${localSearch}`)).toBe(true);
+    expect(assignStub.calledWith(`${origin}/${localSearch}`)).toBe(true);
   });
 
   it("should redirect with preserving callbacks query params", () => {
@@ -137,7 +140,7 @@ describe("Safe Redirection Unit Tests", () => {
     mockRedirectionQueryKey = word();
     mockRedirectionQueryValue = `https://www.google.com`;
     const mockSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}`;
-    const mockUrl = `${url()}${mockSearch}`;
+    const mockUrl = `${origin}${mockSearch}`;
 
     window.location.href = mockUrl;
     window.location.search = mockSearch;
@@ -147,7 +150,7 @@ describe("Safe Redirection Unit Tests", () => {
 
     // Assert
     const assignStub = window.location.assign as SinonStub;
-    expect(assignStub.calledWith("/")).toBe(true);
+    expect(assignStub.calledWith(`${origin}/`)).toBe(true);
   });
 
   it("should escape other domains with encode", () => {
@@ -155,7 +158,7 @@ describe("Safe Redirection Unit Tests", () => {
     mockRedirectionQueryKey = word();
     mockRedirectionQueryValue = `http%3A%2F%2Fgoogle.com`;
     const mockSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}`;
-    const mockUrl = `${url()}${mockSearch}`;
+    const mockUrl = `${origin}${mockSearch}`;
 
     window.location.href = mockUrl;
     window.location.search = mockSearch;
@@ -165,7 +168,31 @@ describe("Safe Redirection Unit Tests", () => {
 
     // Assert
     const assignStub = window.location.assign as SinonStub;
-    expect(assignStub.calledWith("/")).toBe(true);
+    expect(assignStub.calledWith(`${origin}/`)).toBe(true);
+  });
+
+  it("should escape javascript and other invalid domains", () => {
+    // Arrange
+    const errorStub = sandbox.stub(console, "error");
+    const mockJsQuery = "javascript:onerror=alert%3Bthrow%20document.cookie";
+
+    mockRedirectionQueryKey = word();
+    mockRedirectionQueryValue = `${word()}:${mockJsQuery}`;
+    const mockSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}`;
+    const mockUrl = `${origin}${mockSearch}`;
+
+    window.location.href = mockUrl;
+    window.location.search = mockSearch;
+    sandbox.stub(window, "URL").withArgs(`${window.location.origin}/${mockJsQuery}`).throws();
+
+    // Act
+    redirect(mockRedirectionQueryKey);
+
+    // Assert
+    const assignStub = window.location.assign as SinonStub;
+
+    expect(assignStub.calledWith(`/`)).toBe(true);
+    expect(errorStub.called).toBe(true);
   });
 
   it("should escape javascript", () => {
@@ -173,7 +200,7 @@ describe("Safe Redirection Unit Tests", () => {
     mockRedirectionQueryKey = word();
     mockRedirectionQueryValue = `javascript:alert('hey')`;
     const mockSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}`;
-    const mockUrl = `${url()}${mockSearch}`;
+    const mockUrl = `${origin}${mockSearch}`;
 
     window.location.href = mockUrl;
     window.location.search = mockSearch;
@@ -184,7 +211,7 @@ describe("Safe Redirection Unit Tests", () => {
     // Assert
     const assignStub = window.location.assign as SinonStub;
 
-    expect(assignStub.calledWith("alert('hey')")).toBe(true);
+    expect(assignStub.calledWith(`${origin}alert('hey')`)).toBe(true);
   });
 
   describe("options.extraQueryParams", () => {
@@ -197,7 +224,7 @@ describe("Safe Redirection Unit Tests", () => {
 
       // Assert
       const assignStub = window.location.assign as SinonStub;
-      expect(assignStub.calledWith(`${mockRedirectionQueryValue}${extraQueryParams}`)).toBe(true);
+      expect(assignStub.calledWith(`${origin}${mockRedirectionQueryValue}${extraQueryParams}`)).toBe(true);
     });
 
 
@@ -241,7 +268,7 @@ describe("Safe Redirection Unit Tests", () => {
       // Assert
       const replaceStub = window.location.replace as SinonStub;
       const assignStub = window.location.assign as SinonStub;
-      expect(replaceStub.calledWith(mockRedirectionQueryValue)).toBe(true);
+      expect(replaceStub.calledWith(`${origin}${mockRedirectionQueryValue}`)).toBe(true);
       expect(assignStub.called).toBe(false);
     });
   });
@@ -284,7 +311,7 @@ describe("Safe Redirection Unit Tests", () => {
       const key1 = word();
       const key2 = word();
       const key3 = word();
-      window.location.href = `${url()}?${mockRedirectionQueryKey}=${key1}+${key2}+${key3}`;
+      window.location.href = `${origin}?${mockRedirectionQueryKey}=${key1}+${key2}+${key3}`;
 
       // Act
       redirect(mockRedirectionQueryKey);
@@ -292,7 +319,7 @@ describe("Safe Redirection Unit Tests", () => {
       // Assert
       const assignStub = window.location.assign as SinonStub;
 
-      expect(new URL(`${url()}${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}%20${key2}%20${key3}`);
+      expect(new URL(`${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}%20${key2}%20${key3}`);
     });
 
   describe("when options.decodePlus is true", () => {
@@ -300,7 +327,7 @@ describe("Safe Redirection Unit Tests", () => {
       // Arrange
       const key1 = word();
       const key2 = word();
-      window.location.href = `${url()}?${mockRedirectionQueryKey}=${key1}+${key2}`;
+      window.location.href = `${origin}?${mockRedirectionQueryKey}=${key1}+${key2}`;
 
       // Act
       redirect(mockRedirectionQueryKey, {decodePlus: true});
@@ -308,7 +335,7 @@ describe("Safe Redirection Unit Tests", () => {
       // Assert
       const assignStub = window.location.assign as SinonStub;
 
-      expect(new URL(`${url()}${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}+${key2}`);
+      expect(new URL(`${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}+${key2}`);
     });
   });
 });

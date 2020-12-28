@@ -15,13 +15,18 @@ export const redirect = (queryParamName: string, options?: Options) => {
       value += hash;
     }
     if (options?.replace) {
-      return window.location.replace(value);
+      return window.location.replace(getRedirectionUrl(value));
     }
-    window.location.assign(value);
+
+    window.location.assign(getRedirectionUrl(value));
   } catch (e) {
     console.error("Error: ", e);
     window.location.assign("/");
   }
+}
+
+function getRedirectionUrl(value: string) {
+  return `${window.location.origin}${value}`;
 }
 
 function getSafeValues(queryParamName: string) {
