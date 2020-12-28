@@ -25,6 +25,11 @@ jobs:
           key: dependencies-{{ checksum "package.json" }}
       - run: npm run test
       - run: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - package.json
+            - dist
   deploy:
     <<: *defaults
     steps:
