@@ -211,7 +211,7 @@ describe("Safe Redirection Unit Tests", () => {
     // Assert
     const assignStub = window.location.assign as SinonStub;
 
-    expect(assignStub.calledWith(`${origin}alert('hey')`)).toBe(true);
+    expect(assignStub.calledWith(`${origin}/alert('hey')`)).toBe(true);
   });
 
   describe("options.extraQueryParams", () => {

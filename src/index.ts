@@ -26,6 +26,9 @@ export const redirect = (queryParamName: string, options?: Options) => {
 }
 
 function getRedirectionUrl(value: string) {
+  if (!value.startsWith("/")) {
+    return `${window.location.origin}/${value}`;  
+  }
   return `${window.location.origin}${value}`;
 }
 
