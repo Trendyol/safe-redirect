@@ -338,4 +338,20 @@ describe("Safe Redirection Unit Tests", () => {
       expect(new URL(`${assignStub.getCall(0).args[0]}`).pathname).toBe(`/${key1}+${key2}`);
     });
   });
+
+  describe("when options.defaultPath is provided", () => {
+    it("should redirect to defaultPath", () => {
+      // Arrange
+      const localSearch = `?${mockRedirectionQueryKey}=${mockRedirectionQueryValue}`;
+      window.location.search = localSearch;
+      const defaultPath = `/${word()}`;
+
+      // Act
+      redirect("", {defaultPath});
+
+      // Assert
+      const assignStub = window.location.assign as SinonStub;
+      expect(new URL(`${assignStub.getCall(0).args[0]}`).pathname).toBe(defaultPath);
+    });
+  });
 });

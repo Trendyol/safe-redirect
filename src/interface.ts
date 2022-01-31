@@ -3,4 +3,5 @@ export interface Options {
   replace?: boolean;
   eraseHash?: boolean;
   decodePlus?: boolean;
+  defaultPath?: string;
 }
