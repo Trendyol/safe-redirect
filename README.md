@@ -1,3 +1,5 @@
+
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Trendyol/safe-redirect/badge)](https://scorecard.dev/viewer/?uri=github.com/Trendyol/safe-redirect)
 # safe-redirect
 
 safe-redirect is a library which resolves open-redirection vulnerability when we need to make client-side redirection to a path taken from query string.
